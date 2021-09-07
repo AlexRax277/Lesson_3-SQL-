@@ -9,11 +9,23 @@ CREATE TABLE IF NOT EXISTS executor (
 	genre_id INTEGER NOT NULL REFERENCES genre(id)
 );
 
+CREATE TABLE IF NOT EXISTS genre_executor (
+	genre_id INTEGER NOT NULL REFERENCES genre(id),
+	executor_id INTEGER NOT NULL REFERENCES executor(id),
+	CONSTRAINT ge PRIMARY KEY (genre_id, executor_id)
+);
+
 CREATE TABLE IF NOT EXISTS album (
 	id SERIAL PRIMARY KEY,
 	name_album VARCHAR(40) NOT NULL,
 	year_album INTEGER NOT NULL CHECK(year_album > 0),
 	executor_id INTEGER NOT NULL REFERENCES executor(id)
+);
+
+CREATE TABLE IF NOT EXISTS executor_album (
+	executor_id INTEGER NOT NULL REFERENCES executor(id),
+	album_id INTEGER NOT NULL REFERENCES album(id),
+	CONSTRAINT ea PRIMARY KEY (executor_id, album_id)
 );
 
 CREATE TABLE IF NOT EXISTS song (
@@ -24,11 +36,16 @@ CREATE TABLE IF NOT EXISTS song (
 );
 
 CREATE TABLE IF NOT EXISTS collection (
+	id SERIAL PRIMARY KEY,
 	name_collection VARCHAR(40) NOT NULL UNIQUE,
 	year_collection INTEGER NOT NULL CHECK(year_collection > 0),
-	executor_id INTEGER NOT NULL REFERENCES executor(id),
+	song_id INTEGER NOT NULL REFERENCES song(id)
+);
+
+CREATE TABLE IF NOT EXISTS song_collection (
 	song_id INTEGER NOT NULL REFERENCES song(id),
-	CONSTRAINT es PRIMARY KEY (executor_id, song_id)
+	collection_id INTEGER NOT NULL REFERENCES collection(id),
+	CONSTRAINT sc PRIMARY KEY (song_id, collection_id)
 );
 
 
